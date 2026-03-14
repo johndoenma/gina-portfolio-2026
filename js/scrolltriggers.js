@@ -31,3 +31,25 @@ function updateProgress() {
         { root: scrollParent || null, threshold: 0.12 }
     );
     animEls.forEach((el) => revealIO.observe(el));
+
+// ---------- NAV ACTIVE LINK ----------
+function initNavActive() {
+    const sections = Array.from(document.querySelectorAll(".snap-sec[id]"));
+    const links = Array.from(document.querySelectorAll(".menu a[href^='#']"));
+    if (!scrollParent || !sections.length || !links.length) return;
+
+    const setActive = (id) => {
+        links.forEach((a) => a.classList.toggle("active", a.getAttribute("href") === `#${id}`));
+    };
+
+    const io = new IntersectionObserver((entries) => {
+        const visible = entries
+            .filter((e) => e.isIntersecting)
+            .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+        if (visible) setActive(visible.target.id);
+    }, { root: scrollParent, threshold: [0.35, 0.55, 0.75] });
+
+    sections.forEach((sec) => io.observe(sec));
+}
+initNavActive() 
